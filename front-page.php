@@ -203,8 +203,9 @@
                                 if ($phone) :
                                     $wa_number = preg_replace('/[^0-9]/', '', $phone);
                                     if (strpos($wa_number, '0') === 0) $wa_number = '62' . substr($wa_number, 1);
+                                    $wa_text = rawurlencode('Halo ' . get_bloginfo('name') . ', saya ingin tanya tentang produk ' . get_the_title());
                                 ?>
-                                <a href="https://wa.me/<?php echo esc_attr($wa_number); ?>?text=Halo%20Rafacorp,%20saya%20ingin%20tanya%20tentang%20produk%20<?php echo urlencode(get_the_title()); ?>" class="btn btn-success btn-sm rounded-pill px-3">
+                                <a href="https://wa.me/<?php echo esc_attr($wa_number); ?>?text=<?php echo esc_attr($wa_text); ?>" class="btn btn-success btn-sm rounded-pill px-3">
                                     <i class="bi bi-whatsapp"></i> Pesan
                                 </a>
                                 <?php endif; ?>

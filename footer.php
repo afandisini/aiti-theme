@@ -17,14 +17,14 @@
                     </h4>
 
                     <?php if ($address = get_option('company_address')): ?>
-                        <p class="mb-1"><strong><i class="bi bi-geo-alt"></i> Alamat</strong> <?php echo esc_html($address); ?></p>
+                        <p class="mb-1"><strong class="me-2"><i class="bi bi-geo-alt"></i> Alamat</strong><?php echo esc_html($address); ?></p>
                     <?php endif; ?>
 
                     <?php if ($phone = get_option('company_phone')): ?>
-                        <p class="mb-1"><strong><i class="bi bi-telephone"></i> Telepon</strong> <?php echo esc_html($phone); ?></p>
+                        <p class="mb-1"><strong class="me-2"><i class="bi bi-telephone"></i> Telepon</strong><?php echo esc_html($phone); ?></p>
                     <?php endif; ?>
 
-                    <p class="mb-4"><strong><i class="bi bi-envelope"></i> E-mail</strong> <a href="mailto:<?php echo esc_attr(get_option('admin_email')); ?>" class="text-decoration-none"><?php echo esc_html(get_option('admin_email')); ?></a></p>
+                    <p class="mb-4"><strong class="me-1"><i class="bi bi-envelope"></i> E-mail</strong><a href="mailto:<?php echo esc_attr(get_option('admin_email')); ?>" class="text-decoration-none ms-1"><?php echo esc_html(get_option('admin_email')); ?></a></p>
                     
                     <h5 class="fw-bold mb-3">Social Media</h5>
                     <div class="d-flex flex-wrap gap-2">

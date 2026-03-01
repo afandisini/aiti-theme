@@ -49,7 +49,7 @@
             </div>
             <?php $i++; endwhile; wp_reset_postdata(); else: ?>
                 <div class="carousel-item active">
-                    <img src="https://mate.tools/img/1920x800?bgcolor=333&textcolor=fff&text=Selamat+Datang+di+Rafacorp&fmt=png" class="d-block w-100 carousel-height object-fit-cover" alt="Slide Default" width="1920" height="800" loading="eager" fetchpriority="high" decoding="async">
+                    <img src="https://mate.tools/img/1920x800?bgcolor=333&textcolor=fff&text=Selamat+Datang+di+RentCorp&fmt=png" class="d-block w-100 carousel-height object-fit-cover" alt="Slide Default" width="1920" height="800" loading="eager" fetchpriority="high" decoding="async">
                 </div>
             <?php endif; ?>
         </div>
