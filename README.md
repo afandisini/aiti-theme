@@ -96,7 +96,7 @@ Aiti Theme didistribusikan dengan lisensi **GNU GPL v2 or later**.
 
 ### Donasi & Beli Kopi
 
-Kalau AitiGo ngebantu kerjaanmu dan bikin hidup sedikit lebih waras,
+Kalau Aiti-Theme ngebantu kerjaanmu dan bikin hidup sedikit lebih waras,
 boleh traktir kopi biar maintainer kuat begadang.
 
 - [☕(saweria)](https://saweria.co/aitisolutions)
