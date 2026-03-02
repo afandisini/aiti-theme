@@ -3,7 +3,7 @@ Contributors: flashponsel
 Requires at least: 6.0
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 1.3.2
+Stable tag: 1.3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -66,6 +66,20 @@ The initials (e.g., "Scy") are automatically generated from the "Site Title" in 
 Yes, but it is optimized for speed by dequeueing unnecessary block library styles when not needed.
 
 == Changelog ==
+
+= 1.3.3 =
+* Added robust frontend SEO meta output in `wp_head`:
+  - Canonical URL, robots, author, and geo country.
+  - Open Graph (`og:*`) and Twitter meta (`twitter:*`) with dynamic page values.
+* Added cross-platform favicon/search icon tags:
+  - `icon` (32x32), `icon` (192x192), `shortcut icon`, and `apple-touch-icon`.
+  - `msapplication-TileColor`, `msapplication-TileImage`, and `theme-color`.
+* Added cleanup layer to remove empty SEO tags (`content=""` / `href=""`) injected by third-party plugins.
+* Improved heading semantics in hero carousel:
+  - First slide uses `<h1>`, subsequent slides use `<h2>`.
+* Improved hero image delivery:
+  - Kept `fetchpriority="high"` for the first hero image.
+  - Tuned responsive `sizes` and switched hero rendering target to `medium_large` to reduce oversized image downloads.
 
 = 1.3.2 =
 * SEO revision update focused on Core Web Vitals and media delivery.

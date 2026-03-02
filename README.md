@@ -1,6 +1,6 @@
 ﻿# Aiti Theme
 
-![Version](https://img.shields.io/badge/version-1.3.2-1f6feb)
+![Version](https://img.shields.io/badge/version-1.3.3-1f6feb)
 ![WordPress](https://img.shields.io/badge/WordPress-6.0%2B-21759b)
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-777bb4)
 ![License](https://img.shields.io/badge/license-GPLv2%2B-success)
@@ -65,6 +65,19 @@ Inisial logo dibuat otomatis dari **Site Title** di **Settings -> General**.
 Ya. Tema tetap kompatibel dengan Gutenberg, dengan optimasi style agar tidak memberatkan performa.
 
 ## Changelog (Ringkas)
+
+### 1.3.3
+- Penambahan output meta SEO lengkap pada `wp_head`:
+  - `canonical`, `robots`, `author`, `geo.country`.
+  - Open Graph (`og:*`) dan Twitter Card (`twitter:*`) dengan nilai dinamis per halaman.
+- Penambahan output favicon lintas platform/search engine:
+  - `icon` 32x32, `icon` 192x192, `shortcut icon`, `apple-touch-icon`.
+  - `msapplication-TileColor`, `msapplication-TileImage`, dan `theme-color`.
+- Pembersihan otomatis tag meta/link kosong (`content=""`, `href=""`) dari plugin pihak ketiga agar audit SEO lebih stabil.
+- Penyesuaian semantic heading pada carousel: hanya slide pertama menggunakan `<h1>`, slide lainnya `<h2>`.
+- Penyesuaian hero image untuk performa:
+  - `fetchpriority="high"` pada hero pertama.
+  - Optimasi `sizes` dan ukuran gambar `medium_large` untuk mengurangi risiko unduh gambar oversized.
 
 ### 1.3.2
 - Revisi SEO + Core Web Vitals.
