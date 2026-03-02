@@ -14,23 +14,26 @@
             ?>
             <div class="carousel-item <?php echo ($i == 0) ? 'active' : ''; ?>">
                 <div class="carousel-img-overlay"></div>
+                <?php $is_first_slide = (0 === $i); ?>
                 <?php if (has_post_thumbnail()) : ?>
                     <?php
                     $thumb_id = get_post_thumbnail_id();
-                    $is_first_slide = (0 === $i);
                     $hero_attrs = array(
                         'class' => 'd-block w-100 carousel-height object-fit-cover',
                         'alt' => esc_attr(get_the_title()),
                         'decoding' => 'async',
-                        'sizes' => '100vw',
+                        'sizes' => '(max-width: 767px) 100vw, (max-width: 1200px) 90vw, 676px',
                     );
                     if ($is_first_slide) {
                         $hero_attrs['loading'] = 'eager';
                         $hero_attrs['fetchpriority'] = 'high';
+                        $hero_attrs['data-no-optimize'] = '1';
+                        $hero_attrs['data-no-lazy'] = '1';
+                        $hero_attrs['data-skip-lazy'] = '1';
                     } else {
                         $hero_attrs['loading'] = 'lazy';
                     }
-                    $thumb_html = $thumb_id ? wp_get_attachment_image($thumb_id, 'large', false, $hero_attrs) : '';
+                    $thumb_html = $thumb_id ? wp_get_attachment_image($thumb_id, 'medium_large', false, $hero_attrs) : '';
                     if ($thumb_html) {
                         echo $thumb_html;
                     }
@@ -40,7 +43,11 @@
                 <?php endif; ?>
                 
                 <div class="carousel-caption d-flex flex-column h-100 align-items-center justify-content-center text-center text-white">
-                    <h1 class="display-4 fw-bold mb-3"><?php the_title(); ?></h1>
+                    <?php if ($is_first_slide) : ?>
+                        <h1 class="display-4 fw-bold mb-3"><?php the_title(); ?></h1>
+                    <?php else : ?>
+                        <h2 class="display-4 fw-bold mb-3"><?php the_title(); ?></h2>
+                    <?php endif; ?>
                     <p class="lead mb-4 d-none d-md-block"><?php echo wp_trim_words(get_the_excerpt(), 15); ?></p>
                     <a href="<?php the_permalink(); ?>" class="btn btn-primary btn-lg px-4 py-2">
                         <i class="bi bi-eye me-2"></i> Lihat

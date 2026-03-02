@@ -1,8 +1,31 @@
 <!DOCTYPE html>
-<html <?php language_attributes(); ?> data-bs-theme="dark">
+<?php
+$aiti_lang = get_bloginfo('language');
+if (strtolower((string) $aiti_lang) === 'en-us') {
+    $aiti_lang = 'id-ID';
+}
+
+$aiti_meta_description = '';
+if (is_singular()) {
+    $aiti_excerpt = trim((string) get_the_excerpt());
+    if ($aiti_excerpt !== '') {
+        $aiti_meta_description = wp_strip_all_tags($aiti_excerpt);
+    } else {
+        $aiti_meta_description = wp_trim_words(wp_strip_all_tags((string) get_the_content()), 30, '...');
+    }
+} elseif (is_front_page() || is_home()) {
+    $aiti_meta_description = (string) get_bloginfo('description');
+}
+
+if (trim($aiti_meta_description) === '') {
+    $aiti_meta_description = (string) get_bloginfo('description');
+}
+?>
+<html lang="<?php echo esc_attr($aiti_lang); ?>" dir="<?php echo is_rtl() ? 'rtl' : 'ltr'; ?>" data-bs-theme="dark">
 <head>
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="<?php echo esc_attr(wp_trim_words($aiti_meta_description, 30, '...')); ?>">
     <script>
         // Apply theme immediately before rendering
         (function() {

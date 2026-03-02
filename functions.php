@@ -70,6 +70,207 @@ function aiti_solutions_output_verification_meta() {
 add_action('wp_head', 'aiti_solutions_output_verification_meta', 1);
 
 /**
+ * Build robust frontend meta tags (SEO + social + favicon).
+ */
+function aiti_solutions_current_canonical_url() {
+    if (is_front_page()) {
+        return home_url('/');
+    }
+
+    if (is_singular()) {
+        $canonical = get_permalink();
+        if ($canonical) {
+            return $canonical;
+        }
+    }
+
+    global $wp;
+    if (!isset($wp) || !is_object($wp) || !isset($wp->request)) {
+        return home_url('/');
+    }
+
+    $path = (string) $wp->request;
+    $url = home_url($path ? '/' . ltrim($path, '/') . '/' : '/');
+    $query = isset($_SERVER['QUERY_STRING']) ? trim((string) wp_unslash($_SERVER['QUERY_STRING'])) : '';
+    if ($query !== '') {
+        $url = $url . '?' . $query;
+    }
+    return $url;
+}
+
+function aiti_solutions_featured_or_site_image() {
+    if (is_singular()) {
+        $thumb_id = (int) get_post_thumbnail_id();
+        if ($thumb_id > 0) {
+            $img = wp_get_attachment_image_url($thumb_id, 'large');
+            if (!empty($img)) {
+                return $img;
+            }
+        }
+    }
+
+    $site_icon = (int) get_option('site_icon');
+    if ($site_icon > 0) {
+        $icon_url = wp_get_attachment_image_url($site_icon, 'full');
+        if (!empty($icon_url)) {
+            return $icon_url;
+        }
+    }
+
+    if (has_custom_logo()) {
+        $logo_id = (int) get_theme_mod('custom_logo');
+        if ($logo_id > 0) {
+            $logo = wp_get_attachment_image_url($logo_id, 'full');
+            if (!empty($logo)) {
+                return $logo;
+            }
+        }
+    }
+
+    return '';
+}
+
+function aiti_solutions_meta_description_text() {
+    if (is_singular()) {
+        $excerpt = trim((string) get_the_excerpt());
+        if ($excerpt !== '') {
+            return wp_strip_all_tags($excerpt);
+        }
+        $content = trim((string) get_the_content());
+        if ($content !== '') {
+            return wp_trim_words(wp_strip_all_tags($content), 30, '...');
+        }
+    }
+    return (string) get_bloginfo('description');
+}
+
+function aiti_solutions_output_seo_meta() {
+    if (is_admin()) {
+        return;
+    }
+
+    $site_name = (string) get_bloginfo('name');
+    $title = wp_get_document_title();
+    if (trim($title) === '') {
+        $title = $site_name;
+    }
+
+    $desc = aiti_solutions_meta_description_text();
+    if (trim($desc) === '') {
+        $desc = $site_name;
+    }
+    $desc = wp_trim_words($desc, 35, '...');
+
+    $canonical = aiti_solutions_current_canonical_url();
+    $image = aiti_solutions_featured_or_site_image();
+    $locale = str_replace('-', '_', (string) get_bloginfo('language'));
+    if ($locale === '') {
+        $locale = 'id_ID';
+    }
+    $og_type = is_singular() ? 'article' : 'website';
+
+    $author = (string) get_bloginfo('name');
+    if (is_singular()) {
+        $author_name = get_the_author_meta('display_name', (int) get_post_field('post_author', get_the_ID()));
+        if (is_string($author_name) && trim($author_name) !== '') {
+            $author = $author_name;
+        }
+    }
+
+    $theme_color = '#0d6efd';
+    $site_icon_id = (int) get_option('site_icon');
+    $icon_32 = $site_icon_id > 0 ? wp_get_attachment_image_url($site_icon_id, array(32, 32)) : '';
+    $icon_192 = $site_icon_id > 0 ? wp_get_attachment_image_url($site_icon_id, array(192, 192)) : '';
+    $icon_270 = $site_icon_id > 0 ? wp_get_attachment_image_url($site_icon_id, array(270, 270)) : '';
+    $apple_180 = $site_icon_id > 0 ? wp_get_attachment_image_url($site_icon_id, array(180, 180)) : '';
+    $fallback_icon = aiti_solutions_featured_or_site_image();
+    if ($icon_32 === '' && $fallback_icon !== '') {
+        $icon_32 = $fallback_icon;
+    }
+    if ($icon_192 === '' && $fallback_icon !== '') {
+        $icon_192 = $fallback_icon;
+    }
+    if ($apple_180 === '' && $fallback_icon !== '') {
+        $apple_180 = $fallback_icon;
+    }
+
+    echo "\n" . '<!-- AITI SEO Meta -->' . "\n";
+    echo '<meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1">' . "\n";
+    echo '<meta name="author" content="' . esc_attr($author) . '">' . "\n";
+    echo '<meta content="id" name="geo.country">' . "\n";
+    echo '<link rel="canonical" href="' . esc_url($canonical) . '">' . "\n";
+    echo '<meta property="og:locale" content="' . esc_attr($locale) . '">' . "\n";
+    echo '<meta property="og:type" content="' . esc_attr($og_type) . '">' . "\n";
+    if ($image !== '') {
+        echo '<meta property="og:image" content="' . esc_url($image) . '">' . "\n";
+    }
+    echo '<meta property="og:title" content="' . esc_attr($title) . '">' . "\n";
+    echo '<meta property="og:description" content="' . esc_attr($desc) . '">' . "\n";
+    echo '<meta property="og:url" content="' . esc_url($canonical) . '">' . "\n";
+    echo '<meta property="og:site_name" content="' . esc_attr($site_name) . '">' . "\n";
+    echo '<meta name="twitter:card" content="summary_large_image">' . "\n";
+    echo '<meta name="twitter:description" content="' . esc_attr($desc) . '">' . "\n";
+    echo '<meta name="twitter:title" content="' . esc_attr($title) . '">' . "\n";
+    if ($image !== '') {
+        echo '<meta name="twitter:image" content="' . esc_url($image) . '">' . "\n";
+    }
+    echo '<meta name="msapplication-TileColor" content="' . esc_attr($theme_color) . '">' . "\n";
+    if (!empty($icon_270)) {
+        echo '<meta name="msapplication-TileImage" content="' . esc_url($icon_270) . '">' . "\n";
+    }
+    echo '<meta name="theme-color" content="' . esc_attr($theme_color) . '">' . "\n";
+
+    if (!empty($icon_32)) {
+        echo '<link rel="icon" href="' . esc_url($icon_32) . '" sizes="32x32">' . "\n";
+        echo '<link rel="shortcut icon" href="' . esc_url($icon_32) . '">' . "\n";
+    }
+    if (!empty($icon_192)) {
+        echo '<link rel="icon" href="' . esc_url($icon_192) . '" sizes="192x192">' . "\n";
+    }
+    if (!empty($apple_180)) {
+        echo '<link rel="apple-touch-icon" href="' . esc_url($apple_180) . '">' . "\n";
+    }
+}
+add_action('wp_head', 'aiti_solutions_output_seo_meta', 3);
+
+/**
+ * Remove empty SEO meta/link tags injected by third-party plugins.
+ */
+function aiti_solutions_cleanup_empty_head_tags($html) {
+    if (!is_string($html) || $html === '') {
+        return $html;
+    }
+
+    $patterns = array(
+        '/<meta[^>]+name=["\']description["\'][^>]+content=["\']\s*["\'][^>]*>\s*/i',
+        '/<meta[^>]+name=["\']author["\'][^>]+content=["\']\s*["\'][^>]*>\s*/i',
+        '/<meta[^>]+name=["\']robots["\'][^>]+content=["\']\s*["\'][^>]*>\s*/i',
+        '/<meta[^>]+property=["\']og:locale["\'][^>]+content=["\']\s*["\'][^>]*>\s*/i',
+        '/<meta[^>]+property=["\']og:type["\'][^>]+content=["\']\s*["\'][^>]*>\s*/i',
+        '/<meta[^>]+property=["\']og:image["\'][^>]+content=["\']\s*["\'][^>]*>\s*/i',
+        '/<meta[^>]+property=["\']og:title["\'][^>]+content=["\']\s*["\'][^>]*>\s*/i',
+        '/<meta[^>]+property=["\']og:description["\'][^>]+content=["\']\s*["\'][^>]*>\s*/i',
+        '/<meta[^>]+property=["\']og:url["\'][^>]+content=["\']\s*["\'][^>]*>\s*/i',
+        '/<meta[^>]+property=["\']og:site_name["\'][^>]+content=["\']\s*["\'][^>]*>\s*/i',
+        '/<meta[^>]+name=["\']twitter:description["\'][^>]+content=["\']\s*["\'][^>]*>\s*/i',
+        '/<meta[^>]+name=["\']twitter:title["\'][^>]+content=["\']\s*["\'][^>]*>\s*/i',
+        '/<meta[^>]+name=["\']twitter:image["\'][^>]+content=["\']\s*["\'][^>]*>\s*/i',
+        '/<meta[^>]+name=["\']msapplication-TileImage["\'][^>]+content=["\']\s*["\'][^>]*>\s*/i',
+        '/<meta[^>]+name=["\']theme-color["\'][^>]+content=["\']\s*["\'][^>]*>\s*/i',
+        '/<link[^>]+rel=["\']canonical["\'][^>]+href=["\']\s*["\'][^>]*>\s*/i',
+    );
+
+    return preg_replace($patterns, '', $html);
+}
+
+add_action('template_redirect', function() {
+    if (is_admin() || wp_doing_ajax() || (defined('REST_REQUEST') && REST_REQUEST)) {
+        return;
+    }
+    ob_start('aiti_solutions_cleanup_empty_head_tags');
+}, 0);
+
+/**
  * Admin UI tweaks:
  * - Hide top admin bar in wp-admin.
  * - Add quick "Log Out" and "Collapse Menu" items on sidebar top.
@@ -259,17 +460,17 @@ function aiti_solutions_preload_lcp_image() {
         return;
     }
 
-    $src = wp_get_attachment_image_url($thumb_id, 'large');
+    $src = wp_get_attachment_image_url($thumb_id, 'medium_large');
     if (!$src) {
         return;
     }
 
-    $srcset = wp_get_attachment_image_srcset($thumb_id, 'large');
+    $srcset = wp_get_attachment_image_srcset($thumb_id, 'medium_large');
     echo '<link rel="preload" as="image" href="' . esc_url($src) . '"';
     if ($srcset) {
         echo ' imagesrcset="' . esc_attr($srcset) . '"';
     }
-    echo ' imagesizes="100vw">' . "\n";
+    echo ' imagesizes="(max-width: 767px) 100vw, (max-width: 1200px) 90vw, 676px">' . "\n";
 }
 add_action('wp_head', 'aiti_solutions_preload_lcp_image', 2);
 
